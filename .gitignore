@@ -1,8 +1,7 @@
-functions/
-animations/
-images/
-navigation/func/
+raw/
+occMsgs/
 *.asv
 *.mat
 *.csv
+*.json
 .gitattributes
