@@ -20,11 +20,11 @@ H = [1, 0;  % Sensor 1 measures position
 
 % Process noise covariance (Q)
 Q = [1, 0; 
-     0, 1] * 0.001;  % Small process noise
+     0, 1] * 1;  % Small process noise
 
 % Measurement noise covariance (R) for two sensors
-R = [2, 0;  % Sensor 1 has variance 2
-     0, 5].*10; % Sensor 2 has variance 5
+R = [2, 0;      % Sensor 1 has variance 2
+     0, 5] * 1e3; % Sensor 2 has variance 5
 
 % Initial estimation error covariance (P)
 P = eye(2);  % Initial uncertainty

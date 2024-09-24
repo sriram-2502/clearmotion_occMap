@@ -87,11 +87,12 @@ for ct = start_idx:end_idx
     idx = s.dist >= data(ct).dist+5 & s.dist <= data(ct).dist+10;
     front_left_ht = flRoadHt(idx)./speed(idx);  % Front-left wheel heights
     front_right_ht = frRoadHt(idx)./speed(idx);  % Front-right wheel height
+    distance = distances(idx);
 
     % match road heights with occ distances
     for i = 1:M
         currentX = (i - 1) * mapResolution;
-        [~, closestIdx] = min(abs(distances - currentX));
+        [~, closestIdx] = min(abs(distance - currentX));
         flHtClosest = front_left_ht(closestIdx);
         frHtClosest = front_right_ht(closestIdx);
     end
