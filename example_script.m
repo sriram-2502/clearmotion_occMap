@@ -1,11 +1,10 @@
-sID = 77859; offset = 124.143;
-
-s = loadSession(sID, 'includeUhfd', 1)
+clc; clear; close all;
 
 %%
+sID = 77859; offset = 124.143;
+s = loadSession(sID, 'includeUhfd', 1);
 filename = "occMsgs_"+string(sID)+".json";
-fileID = fopen(filename, 'r');
-raw = fread(fileID, inf);
+fileID = fopen(filename, 'r');raw = fread(fileID, inf);
 fclose(fileID);
 str = char(raw');
 data = jsondecode(str);
@@ -37,7 +36,7 @@ end
 
 
 %%
-ct = 9 % Inspect one snapshot
+ct = 452 % Inspect one snapshot
 data(ct).dist = interp1(s.time_offset, s.dist, data(ct).timeOffset-data(ct).timestampDelta-offset);
 data(ct).dist
 idx = s.dist >= data(ct).dist+5 & s.dist <= data(ct).dist+10;

@@ -10,7 +10,7 @@ sID = 77859; offset = 124.143;
 s = loadSession(sID, 'includeUhfd', 1);
 
 % Load occupancy message data
-filename = "occMsgs_"+string(sID)+".json";
+filename = "occMsgs/occMsgs_"+string(sID)+".json";
 fileID = fopen(filename, 'r');
 raw = fread(fileID, inf);
 fclose(fileID);

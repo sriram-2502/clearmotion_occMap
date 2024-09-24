@@ -24,7 +24,7 @@ Q = [1, 0;
 
 % Measurement noise covariance (R) for two sensors
 R = [2, 0;  % Sensor 1 has variance 2
-     0, 5]; % Sensor 2 has variance 5
+     0, 5].*10; % Sensor 2 has variance 5
 
 % Initial estimation error covariance (P)
 P = eye(2);  % Initial uncertainty
