@@ -1,5 +1,5 @@
-raw/
-occMsgs/
+occ_msgs_raw/
+occ_msgs_json/
 *.asv
 *.mat
 *.csv
