@@ -1,11 +1,13 @@
-function visualize_heights(estimated_heights, new_rows, new_cols, dist, ct)
-    % Reshape the estimated heights
-    estimated_heights_2d = reshape(estimated_heights(:, ct), new_rows, new_cols);
+function visualize_heights(estimated_height_map, session_dist, bin_params)
+
+    % unpack bin params
+    new_rows = bin_params.new_rows;
+    new_cols = bin_params.new_cols;
 
     % Create X and Y grid for visualization
     X = 5:0.05:9.95;  % Original X grid (in meters)
     Y = -2.0:0.05:1.95;  % Original Y grid (in meters)
-    X = X + dist;
+    X = X + session_dist;
 
     % Binned X and Y grid
     new_X = linspace(min(X), max(X), new_cols);
@@ -15,7 +17,7 @@ function visualize_heights(estimated_heights, new_rows, new_cols, dist, ct)
 
     % Plot the Kalman filtered estimated heights
     figure(1);
-    surf(XX, YY, estimated_heights_2d);
+    surf(XX, YY, estimated_height_map);
     title('Estimated Heights/Occupancies (Kalman Filter)');
     xlabel('X (meters)');
     ylabel('Y (meters)');

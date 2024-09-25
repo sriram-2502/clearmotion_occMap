@@ -3,7 +3,7 @@ function rm_height_grid = build_rm_height_grid(flHtClosest, frHtClosest, bin_par
     M = bin_params.M;  % Number of rows in the grid
     N = bin_params.N;  % Number of columns in the grid
     wheel_offset = bin_params.wheel_offset;
-    new_rows = bin_params.new_rows;
+    num_cells_in_bin = bin_params.num_cells_in_bin;
 
     % Initialize a 2D grid with zeros
     rm_height_grid = zeros(N, M);
@@ -16,6 +16,12 @@ function rm_height_grid = build_rm_height_grid(flHtClosest, frHtClosest, bin_par
     [~, right_wheel_idx] = min(abs(Y_range - wheel_offset));  % Front-right wheel (positive offset)
 
     % Place the 1D height vectors (flHtClosest and frHtClosest) into the 2D grid
-    rm_height_grid(left_wheel_idx, :) = flHtClosest;  % Place front-left heights
-    rm_height_grid(right_wheel_idx, :) = frHtClosest;  % Place front-right heights
+    tyre_patch_offset = floor(num_cells_in_bin/2);
+    start_idx_left = left_wheel_idx-tyre_patch_offset; 
+    end_idx_left = left_wheel_idx+tyre_patch_offset;
+   
+    rm_height_grid(start_idx_left:end_idx_left, :) = repmat(flHtClosest,num_cells_in_bin,1);  % Place front-left heights
+    start_idx_right = right_wheel_idx-tyre_patch_offset; 
+    end_idx_right = right_wheel_idx+tyre_patch_offset;
+    rm_height_grid(start_idx_right:end_idx_right, :) = repmat(frHtClosest,num_cells_in_bin,1);  % Place front-right heights
 end

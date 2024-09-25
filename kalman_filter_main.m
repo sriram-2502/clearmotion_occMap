@@ -33,33 +33,52 @@ N = 80;  % Number of rows
 M = 100; % Number of columns
 
 bin_params = get_bin_params(N, M, bin_size_in_inches, track_width, occ_resolution);
+new_rows = bin_params.new_rows;
+new_cols = bin_params.new_cols;
+
 binned_grid_size = bin_params.binned_grid_size;
 
-%% Kalman Filter Parameters
+% storage
 start_idx = 100;
 end_idx = 200;
 length = end_idx - start_idx;  % Number of time steps
+estimated_heights = zeros(binned_grid_size, length);
+measurements = zeros(binned_grid_size, length);
+
+%% Kalman Filter Parameters
 
 % Initialize state vector
-state_size = binned_grid_size;  % Occupancy map size only
+state_size = 2*binned_grid_size;  % occ_map size + rm_heigt_map size
 x = zeros(state_size, 1);  % Initial state vector: occupancy
 
 % State transition matrix
 A = eye(state_size);  % State transition matrix
 
 % Process noise covariance (Q)
-Q = eye(state_size) * 1;  % Process noise
+% Higher process noise for occupancy data, lower for road height data
+Q_occ = 1 * eye(state_size/2);  % Process noise for occupancy
+Q_rm = 0.1 * eye(state_size/2);  % Lower process noise for road heights
+Q = blkdiag(Q_occ, Q_rm);  % Combine into a block diagonal matrix
 
 % Initial estimation error covariance (P)
-P = eye(state_size);  % Initial uncertainty
+% Higher initial uncertainty for occupancy, lower for road height
+P_occ = 1 * eye(state_size/2);  % Initial uncertainty for occupancy
+P_rm = 0.1 * eye(state_size/2);  % Lower initial uncertainty for road height
+P = blkdiag(P_occ, P_rm);  % Combine into a block diagonal matrix
 
 % Measurement noise covariances for the fused sources
-R_occ = 10;  % Higher noise for occupancy data
-R_wheel = 1;  % Lower noise for wheel height data
+noise_occ = 10;  % Higher noise for occupancy data
+noise_rm = 1;  % Lower noise for wheel height data
 
-% Storage for results
-estimated_heights = zeros(binned_grid_size, length);
-measurements = zeros(state_size, length);
+% Build the measurement matrix H
+H_occ = eye(state_size/2);
+H_rm = eye(state_size/2);
+H = blkdiag(H_occ, H_rm);  % Block diagonal matrix to combine occupancy and road height matrices
+
+% Build the measurement noise covariance matrix R
+R_occ = noise_occ * eye(state_size/2);  % Higher noise for occupancy data
+R_rm = noise_rm * eye(state_size/2);     % Lower noise for road height data
+R = blkdiag(R_occ, R_rm);  % Block diagonal matrix for the combined noise
 
 %% Run the Kalman Filter for each time step
 for ct = start_idx:end_idx
@@ -80,20 +99,15 @@ for ct = start_idx:end_idx
     rm_height_binned = bin_grid_map(rm_height_grid, bin_params);
     
     % Combine the two sources of measurements
-    combined_measurement = [occ_binned(:); flHtClosest; frHtClosest];
-
-    % Build measurement matrix H
-    H = build_measurement_matrix(state_size, left_wheel_idx, right_wheel_idx);
-
-    % Build noise matrix R for the fused data
-    R = build_measurement_noise_matrix(state_size, R_occ, R_wheel);
+    combined_measurement = [occ_binned(:); rm_height_binned(:)];
 
     % Run the Kalman filter for this time step
     [x, P] = run_kalman_filter(x, A, P, Q, H, R, combined_measurement);
 
     % Store the estimated heights
-    estimated_heights(:, ct - start_idx + 1) = x;
+    estimated_height_map = reshape(x(1:state_size/2),new_rows, new_cols);
+    estimated_heights(:, ct - start_idx + 1) = x(1:state_size/2); % get only first N states
 
     % Visualization (optional)
-    visualize_heights(estimated_heights, new_rows, new_cols, data(ct).dist, ct);
+    visualize_heights(estimated_height_map, data(ct).dist, bin_params);
 end
