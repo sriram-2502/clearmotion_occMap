@@ -2,6 +2,8 @@
 % Fit Gaussian RBFs to the cost map data and plot the results using a fine mesh grid.
 
 clc; clear; close all;
+addpath rbf\
+
 resolution = 0.05;
 
 %% load the height map and accel map

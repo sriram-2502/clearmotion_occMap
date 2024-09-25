@@ -32,7 +32,7 @@ num_cells_in_bin = ceil(bin_size / resolution);  % Number of cells in one bin
 % Grid dimensions of original occupancy map
 N = 80;  % Number of rows
 M = 100; % Number of columns
-mapResolution = 0.05; % 5 cm grids-
+mapResolution = 0.05; % 5 cm grids
 
 % Track width (distance between the left and right wheels)
 track_width = 1.5;  % Meters
