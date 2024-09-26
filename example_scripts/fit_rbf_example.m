@@ -10,7 +10,7 @@ clc; clear; close all;
 %% Example usage
 grid_map = readmatrix('ExampleTerrainMap.xlsx','Sheet','center_hill');
 max_val = max(grid_map,[],"all");
-height_map = (grid_map./max_val) .* 0.05;
+height_map = (grid_map./max_val) .* 0.05; %scaled to a small value
 
 grid_spacing = 1;  % Adjust the spacing between RBF centers
 sigma = 1;  % Tune sigma as needed
@@ -23,7 +23,7 @@ sigma = 1;  % Tune sigma as needed
 centers = [center_x(:), center_y(:)];
 
 % Fit RBFs and get the weights
-weights = fit_rbf(height_map, centers, sigma);
+weights = get_rbf_weights(height_map, centers, sigma);
 
 %%
 % Generate the grid of coordinates

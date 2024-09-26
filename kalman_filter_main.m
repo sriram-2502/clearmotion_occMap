@@ -45,6 +45,11 @@ length = end_idx - start_idx;  % Number of time steps
 estimated_heights = zeros(binned_grid_size, length);
 measurements = zeros(binned_grid_size, length);
 
+% rbf params
+sigma = 1; grid_spacing = 1;
+[center_x, center_y] = meshgrid(1:grid_spacing:new_cols, 1:grid_spacing:new_rows);
+centers = [center_x(:), center_y(:)];  % Flatten the grid of centers
+
 %% Kalman Filter Parameters
 
 % Initialize state vector
@@ -108,6 +113,9 @@ for ct = start_idx:end_idx
     estimated_height_map = reshape(x(1:state_size/2),new_rows, new_cols);
     estimated_heights(:, ct - start_idx + 1) = x(1:state_size/2); % get only first N states
 
+    % fit rbfs and form density function
+    weights_est = fit_rbf(estimated_height_map, bin_params, data(ct).dist, centers, sigma);
+
     % Visualization (optional)
-    visualize_heights(estimated_height_map, data(ct).dist, bin_params);
+    % visualize_heights(estimated_height_map, data(ct).dist, bin_params);
 end
