@@ -1,4 +1,4 @@
-function weights = fit_rbf(estimated_height_map, bin_params, session_dist, centers, sigma, query_point)
+function weights = fit_rbf(estimated_height_map, bin_params, occ_dist, centers, sigma, query_point)
    
     % Unpack binning parameters
     new_rows = bin_params.new_rows;
@@ -43,7 +43,7 @@ function weights = fit_rbf(estimated_height_map, bin_params, session_dist, cente
         
         % Plot the original estimated height map
         [x, y] = meshgrid(1:new_cols, 1:new_rows);  % Original grid
-        x = x + session_dist;
+        x = x + occ_dist;
         subplot(1, 2, 1);
         surf(x, y, normalized_height_map);
         title('Original Estimated Height Map');

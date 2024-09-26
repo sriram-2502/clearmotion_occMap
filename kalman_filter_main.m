@@ -92,11 +92,10 @@ for ct = start_idx:end_idx
     occ2 = reshape(occ, N, M);  % Reshape to original 80x100 grid
 
     % Retrieve road height data for this time step
-    idx = s.dist >= data(ct).dist+5 & s.dist <= data(ct).dist+10;
-    front_left_ht = flRoadHt(idx)./speed(idx);  % Front-left wheel heights
-    front_right_ht = frRoadHt(idx)./speed(idx);  % Front-right wheel height
-
-    % Retrieve and bin the road heights measured at left and right wheels
+    x_start = data(ct).dist+5; 
+    x_end = data(ct).dist+10;
+    occ_dist = data(ct).dist;
+    idx = s.dist >= x_start & s.dist <= x_end;
     [flHtClosest, frHtClosest, rm_height_grid] = bin_road_heights(flRoadHt, frRoadHt, speed, distances, idx, bin_params);
 
     % Bin the occupancy map and RM heights
@@ -114,7 +113,11 @@ for ct = start_idx:end_idx
     estimated_heights(:, ct - start_idx + 1) = x(1:state_size/2); % get only first N states
 
     % fit rbfs and form density function
-    weights_est = fit_rbf(estimated_height_map, bin_params, data(ct).dist, centers, sigma);
+    rbf_weights = fit_rbf(estimated_height_map, bin_params, occ_dist, centers, sigma);
+
+    % run nmpc
+    % x0 = [x_start;0]; xf = [x_end;0];
+    % [xlog, rho_log, u_cl] = run_nmpc_with_density(estimated_height_map, bin_params, occ_dist, rbf_weights, centers, sigma, x0, xf);
 
     % Visualization (optional)
     % visualize_heights(estimated_height_map, data(ct).dist, bin_params);

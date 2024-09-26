@@ -2,7 +2,7 @@ clc;
 clear;
 close all;
 import casadi.*
-addpath ../nmpc/
+addpath ../nmpc/ ../dynamics
 
 % Set defaults
 set(0, 'DefaultFigureColor', 'w');
